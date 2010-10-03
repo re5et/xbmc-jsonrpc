@@ -5,8 +5,8 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "xbmc-jsonrpc"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{A module for interacting with xbmc's json-rpc server}
+    gem.description = %Q{A module for interacting with xbmc's json-rpc server}
     gem.email = "re5etsmyth@gmail.com"
     gem.homepage = "http://github.com/re5et/xbmc-jsonrpc"
     gem.authors = ["atom smith"]

@@ -1,31 +1,57 @@
+# This program allows easy interaction with XBMC's json-rpc API.
+# Connection information is provided, and connection is created
+# and stored for repeated use.  The list of classes and methods
+# available are retrieved from the XBMC json-rpc API, and can be
+# accessed or referenced using instance.commands or
+# instance.print_commands.  An command can be searched for using
+# instance.apropos
+#
+# Author:: atom smith (http://twitter.com/re5et)
+# Copyright:: Copyright (c) 2010 atom smith
+# License:: Distributes under the same terms as Ruby
+
 require 'rubygems'
 require 'net/http'
 require 'json'
 
+# The XBMC_JSONRPC module is a namespace / wrapper
+
 module XBMC_JSONRPC
 
+  # Attempt to create connection with xbmc server, and retrieve available
+  # commands.  Accepts connection information arguments and if successful
+  # returns a new connection
   def self.new(options)
-    @connection = XBMC_JSONRPC::Connection.new(options)
+    if @connection = XBMC_JSONRPC::Connection.new(options)
+      commands = XBMC_JSONRPC::JSONRPC.Introspect['result']['commands']
+      @commands = {}
 
-    commands = XBMC_JSONRPC::JSONRPC.Introspect['result']['commands']
-    @commands = {}
-
-    commands.each do |command|
-      command_name = command.shift[1]
-      @commands[command_name] = command
+      commands.each do |command|
+        command_name = command.shift[1]
+        @commands[command_name] = command
+      end
     end
-
     return self
   end
 
+  # Make an API call to the instance XBMC server
   def self.command(method,args)
     @connection.command(method, args)
   end
 
+  # returns all available commands returned by JSON.Introspect
   def self.commands
     @commands
   end
 
+  # nicely print out all available commands.
+  # useful at command line / irb / etc
+  def self.get_commands
+    @commands.each {|k,v| self.pp_command k  }
+    return nil
+  end
+
+  # finds and prettily prints appropriate commands based on provided keyword
   def self.apropos(find)
     regexp = /#{find}/im
     matches = []
@@ -37,8 +63,10 @@ module XBMC_JSONRPC
     else
       matches.each {|command| self.pp_command command }
     end
+    return nil
   end
 
+  # prettily print out requested command
   def self.pp_command(command)
     description = @commands[command]['description']
     description = "<no description exists for #{command}>" unless !description.empty?
@@ -47,20 +75,22 @@ module XBMC_JSONRPC
     puts "\t\t#{description}\n\n"
   end
 
+  # Class to create and store connection information for xbmc server
+  # also handles actual json back and forth.
   class Connection
 
     def initialize(options)
+
       connection_info = {
         :server => '127.0.0.1',
-        :port => 80,
+        :port => '8080',
         :user => 'xbmc',
-        :pass => 'xbmc'
+        :pass => ''
       }
 
       @connection_info = connection_info.merge(options)
 
       @url = URI.parse("http://#{@connection_info[:server]}:#{@connection_info[:port]}/jsonrpc")
-
     end
 
     def command(method, params)
@@ -84,11 +114,14 @@ module XBMC_JSONRPC
       end
     rescue StandardError
       puts "Unable to connect to server specified\n"
-      exit
+      return false
     end
 
   end
 
+  # utility class for others to inherit from.  For now uses method missing
+  # to make all calls to the send_command because there is no meaningful
+  # difference between namespaces / methods at the moment.
   class APIBase
 
     def self.method_missing(method, args = {})
@@ -99,11 +132,6 @@ module XBMC_JSONRPC
         XBMC_JSONRPC.command("#{apiClass}.#{method}", args)
       end
     end
-
-#     def self.get_commands
-#       p self.name
-# #      @commands.keys.grep()
-#     end
 
   end
 
