@@ -1,9 +1,83 @@
 = xbmc-jsonrpc
 
-Description goes here.
+XBMC_JSONRPC is a module created for simple interaction with the XBMC JSONRPC API introduced in XBMC dharma 2.
+
+Create a new connection:
+       irb(main):001:0> x = XBMC_JSONRPC.new
+       => XBMC_JSONRPC
+
+List all commands (including the details):
+
+     irb(main):002:0> x.commands
+     => {"System.GetInfoLabels"=>{"executable"=>true, "permission"=>"ReadData", "description"=>"Retrieve info labels about the system"}, "Files.Download"=>{"executable"=>true, "permission"=>"ReadData", "description"=>"Specify a file to download to get info about how to download it, i.e a proper URL"}, "PicturePlayer.PlayPause"=>{"executable"=>true, "permission"=>"ControlPlayback", "description"=>"Pauses or unpause slideshow"}.....
+
+Find suitable commands based on name / description:
+
+     irb(main):003:0> x.apropos :slideshow
+
+     	PicturePlayer.PlayPause
+        		Pauses or unpause slideshow
+
+
+        XBMC.StartSlideshow
+           		Starts slideshow. Parameter example {"directory": "/foo/", "random": true, "recursive": true} or just string to recursively and random run directory
+
+
+        PicturePlayer.Stop
+           		Stops slideshow
+
+
+        PicturePlayer.SkipNext
+           		Skips to next picture in the slideshow
+
+
+       	PicturePlayer.SkipPrevious
+           		Skips to previous picture in the slideshow
+
+     => nil
+
+
+Get the commands for a namespace:
+
+    irb(main):007:0> x::XBMC.commands
+
+    	XBMC.Play
+        		Starts playback
+
+
+        XBMC.GetVolume
+           		Retrieve the current volume
+
+
+        XBMC.StartSlideshow
+          		Starts slideshow. Parameter example {"directory": "/foo/", "random": true, "recursive": true} or just string to recursively and random run directory
+
+
+        XBMC.SetVolume
+           		Set volume. Parameter integer between 0 amd 100
+
+
+       	XBMC.Quit
+           		Quit xbmc
+
+
+       	XBMC.Log
+           		Logs a line in the xbmc.log. Parameter example {"message": "foo", "level": "info"} or just a string to log message with level debug
+
+
+     	XBMC.ToggleMute
+           		Toggle mute
+
+=> [nil, nil, nil, nil, nil, nil, nil]
+
+
+Commands are run like so:
+
+         irb(main):008:0> x::VideoPlayer.PlayPause
+         => {"result"=>{"playing"=>true, "paused"=>false}, "id"=>1, "jsonrpc"=>"2.0"}
 
 == Note on Patches/Pull Requests
- 
+
 * Fork the project.
 * Make your feature addition or bug fix.
 * Add tests for it. This is important so I don't break it in a
