@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["atom smith"]
-  s.date = %q{2010-10-03}
+  s.date = %q{2010-10-13}
   s.description = %q{A module for interacting with xbmc's json-rpc server}
   s.email = %q{re5etsmyth@gmail.com}
   s.extra_rdoc_files = [
@@ -25,7 +25,8 @@ Gem::Specification.new do |s|
      "VERSION",
      "lib/xbmc-jsonrpc.rb",
      "test/helper.rb",
-     "test/test_xbmc-jsonrpc.rb"
+     "test/test_xbmc-jsonrpc.rb",
+     "xbmc-jsonrpc.gemspec"
   ]
   s.homepage = %q{http://github.com/re5et/xbmc-jsonrpc}
   s.rdoc_options = ["--charset=UTF-8"]

@@ -21,21 +21,23 @@ module XBMC_JSONRPC
   # Attempt to create connection with xbmc server, and retrieve available
   # commands.  Accepts connection information arguments and if successful
   # returns a new connection
-  def self.new(options)
-    if @connection = XBMC_JSONRPC::Connection.new(options)
-      commands = XBMC_JSONRPC::JSONRPC.Introspect['result']['commands']
+  def self.new(options = {})
+    @connection = XBMC_JSONRPC::Connection.new(options)
+    if @connection.command('JSONRPC.Ping')
+      commands = @connection.command('JSONRPC.Introspect')['result']['commands']
       @commands = {}
 
       commands.each do |command|
         command_name = command.shift[1]
         @commands[command_name] = command
       end
+      return self
     end
-    return self
+    return false
   end
 
   # Make an API call to the instance XBMC server
-  def self.command(method,args)
+  def self.command(method,args = {})
     @connection.command(method, args)
   end
 
@@ -93,7 +95,7 @@ module XBMC_JSONRPC
       @url = URI.parse("http://#{@connection_info[:server]}:#{@connection_info[:port]}/jsonrpc")
     end
 
-    def command(method, params)
+    def command(method, params = {})
       req = Net::HTTP::Post.new(@url.path)
       req.basic_auth @connection_info[:user], @connection_info[:pass]
       req.add_field 'Content-Type', 'application/json'
@@ -106,14 +108,13 @@ module XBMC_JSONRPC
 
       res = Net::HTTP.new(@url.host, @url.port).start {|http| http.request(req) }
 
-      case res
-      when Net::HTTPSuccess, Net::HTTPRedirection
+      if res.kind_of? Net::HTTPSuccess
         return JSON.parse(res.body)
       else
-        res.error!
+        return res.error!
       end
     rescue StandardError
-      puts "Unable to connect to server specified\n"
+      print "Unable to connect to server specified\n", $!
       return false
     end
 
@@ -124,13 +125,19 @@ module XBMC_JSONRPC
   # difference between namespaces / methods at the moment.
   class APIBase
 
+    # get the correct api namespace to use
+    def self.namespace
+      @namespace = @namespace || self.name.to_s.split('::')[1]
+    end
+
+    # pass on namespace + method and arguments
     def self.method_missing(method, args = {})
-      apiClass =  self.name.to_s.split('::')[1]
-      if method == :get_commands
-        XBMC_JSONRPC.commands.keys.sort.grep(/#{apiClass}/) {|command| XBMC_JSONRPC.pp_command(command) }
-      else
-        XBMC_JSONRPC.command("#{apiClass}.#{method}", args)
-      end
+      XBMC_JSONRPC.command("#{self.namespace}.#{method}", args)
+    end
+
+    # show commands for namespace
+    def self.commands
+      XBMC_JSONRPC.commands.keys.grep(/#{self.namespace}\./) {|command| XBMC_JSONRPC.pp_command(command) }
     end
 
   end
@@ -162,6 +169,9 @@ module XBMC_JSONRPC
   end
 
   class AudioPlayer < APIBase
+
+    # same methods as VideoPlayer
+
   end
 
   class VideoPlayer < APIBase
