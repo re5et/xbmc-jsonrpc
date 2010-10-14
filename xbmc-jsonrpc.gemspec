@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{xbmc-jsonrpc}
-  s.version = "0.1.0"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["atom smith"]
-  s.date = %q{2010-10-13}
+  s.date = %q{2010-10-14}
   s.description = %q{A module for interacting with xbmc's json-rpc server}
   s.email = %q{re5etsmyth@gmail.com}
   s.extra_rdoc_files = [
