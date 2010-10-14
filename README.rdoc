@@ -3,78 +3,78 @@
 XBMC_JSONRPC is a module created for simple interaction with the XBMC JSONRPC API introduced in XBMC dharma 2.
 
 Create a new connection:
-       irb(main):001:0> x = XBMC_JSONRPC.new
-       => XBMC_JSONRPC
+	irb(main):001:0> x = XBMC_JSONRPC.new
+	=> XBMC_JSONRPC
 
 List all commands (including the details):
 
-     irb(main):002:0> x.commands
-     => {"System.GetInfoLabels"=>{"executable"=>true, "permission"=>"ReadData", "description"=>"Retrieve info labels about the system"}, "Files.Download"=>{"executable"=>true, "permission"=>"ReadData", "description"=>"Specify a file to download to get info about how to download it, i.e a proper URL"}, "PicturePlayer.PlayPause"=>{"executable"=>true, "permission"=>"ControlPlayback", "description"=>"Pauses or unpause slideshow"}.....
+	irb(main):002:0> x.commands
+	=> {"System.GetInfoLabels"=>{"executable"=>true, "permission"=>"ReadData", "description"=>"Retrieve info labels about the system"}, "Files.Download"=>{"executable"=>true, "permission"=>"ReadData", "description"=>"Specify a file to download to get info about how to download it, i.e a proper URL"}, "PicturePlayer.PlayPause"=>{"executable"=>true, "permission"=>"ControlPlayback", "description"=>"Pauses or unpause slideshow"}.....
 
 Find suitable commands based on name / description:
 
-     irb(main):003:0> x.apropos :slideshow
+	irb(main):003:0> x.apropos :slideshow
 
-     	PicturePlayer.PlayPause
-        		Pauses or unpause slideshow
-
-
-        XBMC.StartSlideshow
-           		Starts slideshow. Parameter example {"directory": "/foo/", "random": true, "recursive": true} or just string to recursively and random run directory
+		PicturePlayer.PlayPause
+				Pauses or unpause slideshow
 
 
-        PicturePlayer.Stop
-           		Stops slideshow
+		XBMC.StartSlideshow
+					Starts slideshow. Parameter example {"directory": "/foo/", "random": true, "recursive": true} or just string to recursively and random run directory
 
 
-        PicturePlayer.SkipNext
-           		Skips to next picture in the slideshow
+		PicturePlayer.Stop
+					Stops slideshow
 
 
-       	PicturePlayer.SkipPrevious
-           		Skips to previous picture in the slideshow
+		PicturePlayer.SkipNext
+					Skips to next picture in the slideshow
 
-     => nil
+
+			PicturePlayer.SkipPrevious
+					Skips to previous picture in the slideshow
+
+	=> nil
 
 
 Get the commands for a namespace:
 
-    irb(main):007:0> x::XBMC.commands
+	irb(main):007:0> x::XBMC.commands
 
-    	XBMC.Play
-        		Starts playback
-
-
-        XBMC.GetVolume
-           		Retrieve the current volume
+		XBMC.Play
+				Starts playback
 
 
-        XBMC.StartSlideshow
-          		Starts slideshow. Parameter example {"directory": "/foo/", "random": true, "recursive": true} or just string to recursively and random run directory
+		XBMC.GetVolume
+					Retrieve the current volume
 
 
-        XBMC.SetVolume
-           		Set volume. Parameter integer between 0 amd 100
+		XBMC.StartSlideshow
+				Starts slideshow. Parameter example {"directory": "/foo/", "random": true, "recursive": true} or just string to recursively and random run directory
 
 
-       	XBMC.Quit
-           		Quit xbmc
+		XBMC.SetVolume
+					Set volume. Parameter integer between 0 amd 100
 
 
-       	XBMC.Log
-           		Logs a line in the xbmc.log. Parameter example {"message": "foo", "level": "info"} or just a string to log message with level debug
+		XBMC.Quit
+					Quit xbmc
 
 
-     	XBMC.ToggleMute
-           		Toggle mute
+		XBMC.Log
+					Logs a line in the xbmc.log. Parameter example {"message": "foo", "level": "info"} or just a string to log message with level debug
 
-=> [nil, nil, nil, nil, nil, nil, nil]
+
+		XBMC.ToggleMute
+					Toggle mute
+
+	=> [nil, nil, nil, nil, nil, nil, nil]
 
 
 Commands are run like so:
 
-         irb(main):008:0> x::VideoPlayer.PlayPause
-         => {"result"=>{"playing"=>true, "paused"=>false}, "id"=>1, "jsonrpc"=>"2.0"}
+		 irb(main):008:0> x::VideoPlayer.PlayPause
+		 => {"result"=>{"playing"=>true, "paused"=>false}, "id"=>1, "jsonrpc"=>"2.0"}
 
 == Note on Patches/Pull Requests
 
