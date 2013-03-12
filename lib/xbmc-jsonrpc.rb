@@ -24,12 +24,16 @@ module XBMC_JSONRPC
   def self.new(options = {})
     @connection = XBMC_JSONRPC::Connection.new(options)
     if @connection.command('JSONRPC.Ping')
-      commands = @connection.command('JSONRPC.Introspect')['result']['commands']
       @commands = {}
+      if @connection.command('JSONRPC.Version')['result']['version']['major'].to_i >= 5
+        @commands = @connection.command('JSONRPC.Introspect')['result']['methods']
+      else
+        commands = @connection.command('JSONRPC.Introspect')['result']['commands']
 
-      commands.each do |command|
-        command_name = command.shift[1]
-        @commands[command_name] = command
+        commands.each do |command|
+          command_name = command.shift[1]
+          @commands[command_name] = command
+        end
       end
       return self
     end
