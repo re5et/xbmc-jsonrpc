@@ -25,10 +25,15 @@ module XBMC_JSONRPC
     @connection = XBMC_JSONRPC::Connection.new(options)
     if @connection.command('JSONRPC.Ping')
       @commands = {}
+      introspection = @connection.command('JSONRPC.Introspect')['result']
       if @connection.command('JSONRPC.Version')['result']['version']['major'].to_i >= 5
-        @commands = @connection.command('JSONRPC.Introspect')['result']['methods']
+        @commands = introspection['methods']
+        introspection.each do |k,v|
+          instance_variable_set(:"@#{k}", v)
+          self.class.send(:define_method, k.to_sym) {instance_variable_get(:"@#{k}")}
+        end
       else
-        commands = @connection.command('JSONRPC.Introspect')['result']['commands']
+        commands = introspection['commands']
 
         commands.each do |command|
           command_name = command.shift[1]
