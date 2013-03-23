@@ -104,11 +104,12 @@ module XBMC_JSONRPC
     end
 
     def command(method, params = {})
+      command_id = params.delete :id
       req = Net::HTTP::Post.new(@url.path)
       req.basic_auth @connection_info[:user], @connection_info[:pass]
       req.add_field 'Content-Type', 'application/json'
       req.body = {
-        "id" => 1,
+        "id" => command_id || 1,
         "jsonrpc" => "2.0",
         "method" => method,
         "params" => params
